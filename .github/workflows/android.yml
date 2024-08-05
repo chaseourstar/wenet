@@ -38,7 +38,7 @@ jobs:
         cd ${{ env.ANDROID_DIR }}/fbjni
         wget https://github.com/facebookincubator/fbjni/archive/refs/tags/v0.6.0.zip
         unzip v0.6.0.zip
-        cd fbjni-${{ env.FBJNI_VERSION }}/
+        cd fbjni-0.6.0/
         ./build.sh
 
     - name: Download and Set Up PyTorch Android Library
