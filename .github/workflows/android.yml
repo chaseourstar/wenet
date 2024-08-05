@@ -39,7 +39,7 @@ jobs:
         wget https://github.com/facebookincubator/fbjni/archive/refs/tags/v0.6.0.zip
         unzip v0.6.0.zip
         cd fbjni-0.6.0/
-        ./build.sh
+        ./gradlew build
 
     - name: Download and Set Up PyTorch Android Library
       run: |
@@ -59,7 +59,7 @@ jobs:
       run: |
         cd ${{ env.ANDROID_DIR }}
         chmod +x gradlew
-        ./gradlew assembleRelease -DFBJNI_LIBRARY=${{ env.ANDROID_DIR }}/fbjni/fbjni-${{ env.FBJNI_VERSION }}/build/lib -DPYTORCH_LIBRARY=${{ env.ANDROID_DIR }}/pytorch/jni
+        ./gradlew assembleRelease -DFBJNI_LIBRARY=${{ env.ANDROID_DIR }}/fbjni/fbjni-0.6.0/build/lib -DPYTORCH_LIBRARY=${{ env.ANDROID_DIR }}/pytorch/jni
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
