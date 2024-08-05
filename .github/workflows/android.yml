@@ -11,31 +11,67 @@ on:
 env:
   ANDROID_DIR: runtime/android
   RELEASE_DIR: app/build/outputs/apk/release
+  FBJNI_DIR: /home/runner/work/wenet/wenet/runtime/android/fbjni
+  PYTORCH_DIR: /home/runner/work/wenet/wenet/runtime/android/pytorch
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: set up JDK 11
+
+    - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
 
+    - name: Set up Android NDK and CMake
+      uses: actions/setup-ndk@v1
+      with:
+        ndk-version: '21.1.6352462'
+      - name: Install CMake
+        uses: kitware/cmake@v3.18.1
+        with:
+          cmake-version: '3.18.1'
+
     - name: Prepare model
       run: |
-        wget ${{ github.event.inputs.modelURL}}
+        wget ${{ github.event.inputs.modelURL }}
         tar -xf *.tar.gz
         find . \( -name "final.zip" -o -name "units.txt" \) |\
           xargs -I  {} cp {} ${{ env.ANDROID_DIR }}/app/src/main/assets
+
+    - name: Install FBJNI and PyTorch
+      run: |
+        # Create directories for FBJNI and PyTorch
+        mkdir -p ${{ env.FBJNI_DIR }}
+        mkdir -p ${{ env.PYTORCH_DIR }}
+
+        # Download and extract FBJNI
+        wget https://github.com/facebook/fbjni/releases/download/v0.5.1/fbjni-0.5.1.tar.gz -O fbjni.tar.gz
+        tar -xzf fbjni.tar.gz -C ${{ env.FBJNI_DIR }}
+
+        # Download and extract PyTorch
+        wget https://github.com/pytorch/pytorch/releases/download/v1.13.0/pytorch_android-1.13.0.tar.gz -O pytorch.tar.gz
+        tar -xzf pytorch.tar.gz -C ${{ env.PYTORCH_DIR }}
 
     - name: Build with Gradle
       run: |
         cd ${{ env.ANDROID_DIR }}
         chmod +x gradlew
         ./gradlew assembleRelease
+
+    - name: Build with CMake
+      run: |
+        cd ${{ env.ANDROID_DIR }}
+        mkdir -p build
+        cd build
+        cmake .. \
+          -DFBJNI_LIBRARY=${{ env.FBJNI_DIR }}/libfbjni.so \
+          -DPYTORCH_LIBRARY=${{ env.PYTORCH_DIR }}/libpytorch.so
+        make
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
