@@ -238,6 +238,9 @@ void AsrDecoder::AttentionRescoring() {
   for (size_t i = 0; i < num_hyps; ++i) {
     result_[i].score = opts_.rescoring_weight * rescoring_score[i] +
                        opts_.ctc_weight * result_[i].score;
+    LOG(INFO) << result_[i].sentence;
+    LOG(INFO) << result_[i].score;
+    LOG(INFO) << rescoring_score[i];
   }
   std::sort(result_.begin(), result_.end(), DecodeResult::CompareFunc);
 }
