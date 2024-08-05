@@ -7,6 +7,11 @@ on:
         description: 'Model URL'
         required: true
         default: https://wenet-1256283475.cos.ap-shanghai.myqcloud.com/models/aishell/20210601_u2%2B%2B_conformer_libtorch.tar.gz
+      build:
+        description: 'Trigger the build process'
+        required: true
+        default: 'true'
+        type: boolean
 
 env:
   ANDROID_DIR: runtime/android
@@ -16,6 +21,7 @@ env:
 
 jobs:
   build:
+    if: ${{ github.event.inputs.build == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
