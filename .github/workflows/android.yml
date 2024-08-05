@@ -36,8 +36,8 @@ jobs:
       run: |
         mkdir -p ${{ env.ANDROID_DIR }}/fbjni
         cd ${{ env.ANDROID_DIR }}/fbjni
-        wget https://github.com/facebook/fbjni/archive/refs/tags/${{ env.FBJNI_VERSION }}.zip
-        unzip ${{ env.FBJNI_VERSION }}.zip
+        wget https://github.com/facebookincubator/fbjni/archive/refs/tags/${{ env.FBJNI_VERSION }}.zip
+        unzip ${ env.FBJNI_VERSION }.zip
         cd fbjni-${{ env.FBJNI_VERSION }}/
         ./build.sh
 
